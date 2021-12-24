@@ -8,6 +8,8 @@ import math
 nltk.download('stopwords')
 nltk.download('punkt')
 
+__all__ = ['Clusterer']
+
 
 class NLPObject:
     """Object Container with vector for similarity comparisons.
