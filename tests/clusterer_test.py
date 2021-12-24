@@ -1,42 +1,49 @@
 import unittest
 
-from article import Article
-from article_clusterer import Clusterer
-from article_collector import ArticleCollector
-from company import companies
-from event import Event
+from src.text_based_clusterer.clusterer import Clusterer
 
+class StringContainer:
+    def __init__(self, str_1: str, str_2: str):
+        self.str_1 = str_1
+        self.str_2 = str_2
 
 class ClustererTest(unittest.TestCase):
     CLUSTER_THRESHOLD = 0.3
     ACTIVE_THRESHOLD = 60
 
-    def test_add(self):
-        print('Testing add function:')
+    def test_single_attribute(self):
+        print('Testing clustering using one attributes:')
 
-        all_articles = []
-        for item in companies:
-            company = item['company']
-            url = item['url']
-            print('Retrieving ' + str(company) + ':')
-            collector = ArticleCollector(company, url)
-            articles = collector.get_articles(100)
-            print('\t', 'Found', len(articles))
-            all_articles += articles
-        print('Clustering ' + str(len(all_articles)) + ' Articles:')
+        string_container_1 = StringContainer('dog', 'cat')
+        string_container_2 = StringContainer('dog', 'cat')
+        string_container_3 = StringContainer('cat', 'dog')
+        string_container_4 = StringContainer('cat', 'dog')
 
-        clusters = Clusterer(self.CLUSTER_THRESHOLD, self.ACTIVE_THRESHOLD)
-        clusters.add_articles(all_articles)
+        string_containers = [string_container_1, string_container_2,
+                             string_container_3, string_container_4]
 
-        for i, event in enumerate(clusters.get_events()):
-            if len(event.articles) < 3:
-                continue
-            self.assertIsInstance(event, Event)
-            print('Event ', i + 1)
-            for article in event.articles:
-                self.assertIsInstance(article, Article)
-                print('\t', article.company.name, ': ', article.title, article.article_url)
-        print()
+        clusterer = Clusterer(self.CLUSTER_THRESHOLD)
+
+        clusterer.add_objects(string_containers, ['str_1'])
+
+        print(clusterer.get_clusters())
+
+    def test_multiple_attributes(self):
+        print('Testing clustering using multiple attributes:')
+
+        string_container_1 = StringContainer('dog', 'cat')
+        string_container_2 = StringContainer('dog', 'cat')
+        string_container_3 = StringContainer('cat', 'dog')
+        string_container_4 = StringContainer('cat', 'dog')
+
+        string_containers = [string_container_1, string_container_2,
+                             string_container_3, string_container_4]
+
+        clusterer = Clusterer(self.CLUSTER_THRESHOLD)
+
+        clusterer.add_objects(string_containers, ['str_1', 'str_2'])
+
+        print(clusterer.get_clusters())
 
 
 if __name__ == '__main__':
