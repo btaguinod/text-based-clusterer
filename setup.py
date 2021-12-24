@@ -1,6 +1,6 @@
 [metadata]
 name = text-based-clusterer
-version = 0.0.1
+version = 0.0.3
 author = Benedict Taguinod
 author_email = benedict.a.taguinod@gmail.com
 description = A package that clusters python objects based on a chosen string attribute
