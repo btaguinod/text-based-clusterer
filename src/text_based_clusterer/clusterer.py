@@ -14,29 +14,36 @@ class NLPObject:
 
     Attributes:
         object: Contained object.
+        tokens:
         vector: Numpy vector representation.
     """
 
-    def __init__(self, object_arg: object):
+    def __init__(self, object_arg: object, attributes: list[str]):
+        """Initialize NLPObject
+
+        Args:
+            object_arg: Object for container.
+            attributes: List of strings corresponding to object text
+                attributes.
+        """
         self.object = object_arg
+        self.tokens = self.preprocess_text(attributes)
         self.vector = None
 
-    def set_tf_vector(self, index: list[str], attributes: list[str]) -> list[str]:
+    def set_tf_vector(self, index: list[str]) -> list[str]:
         """Calculate and store term frequency vector.
 
         Args:
             index: Word index.
-            attributes: Names of object attributes.
 
         Returns:
             Updated word index.
         """
         new_index = index.copy()
-        tokens = self.preprocess_text(attributes)
-        unique_words = set(tokens)
+        unique_words = set(self.tokens)
 
         text_freq_dict = {word: 0 for word in unique_words}
-        for word in tokens:
+        for word in self.tokens:
             text_freq_dict[word] += 1
 
         if new_index is None:
@@ -49,7 +56,7 @@ class NLPObject:
         for word in new_index:
             tf.append(text_freq_dict[word] if word in unique_words else 0)
 
-        self.vector = np.array(tf) / len(tokens)
+        self.vector = np.array(tf) / len(self.tokens)
         return new_index
 
     def pad_tf_vector(self, padding_len: int):
@@ -62,6 +69,10 @@ class NLPObject:
 
     def preprocess_text(self, attributes: list[str]) -> list[str]:
         """Turn text into tokens without stopwords and punctuation.
+
+        Args:
+            attributes: List of strings corresponding to object text
+                attributes.
 
         Returns:
             List of tokens.
@@ -138,16 +149,18 @@ class Clusterer:
         self.clusters = []
         self.index = []
 
-    def add_clusters(self, cluster_lists: list[list[object]]):
+    def add_clusters(self, cluster_lists: list[list[object]], attributes: list[str]):
         """Add existing clusters.
 
         Args:
             cluster_lists: Clustered lists of objects.
+            attributes: List of strings corresponding to object text
+                attributes.
         """
         for cluster_list in cluster_lists:
             nlp_objects = []
             for cluster_object in cluster_list:
-                nlp_objects.append(NLPObject(cluster_object))
+                nlp_objects.append(NLPObject(cluster_object, attributes))
             self.clusters.append(Cluster(nlp_objects))
 
         for cluster in self.clusters:
@@ -166,9 +179,9 @@ class Clusterer:
             objects: Objects to cluster.
             attributes: List of strings corresponding to attributes.
         """
-        nlp_objects = [NLPObject(object_item) for object_item in objects]
+        nlp_objects = [NLPObject(object_item, attributes) for object_item in objects]
         for nlp_object in nlp_objects:
-            self.index = nlp_object.set_tf_vector(self.index, attributes)
+            self.index = nlp_object.set_tf_vector(self.index)
 
         index_len = len(self.index)
         for nlp_object in nlp_objects:
