@@ -49,6 +49,25 @@ class ClustererTest(unittest.TestCase):
 
         print(clusterer.get_clusters())
 
+    def test_existing_cluster(self):
+        string_container_1 = StringContainer('dog', 'cat')
+        string_container_2 = StringContainer('cat', 'dog')
+        string_container_3 = StringContainer('goat', 'sheep')
+        string_container_4 = StringContainer('goat', 'goat')
+
+        string_containers = [string_container_1, string_container_2,
+                             string_container_3, string_container_4]
+
+        existing_cluster = [[string_container_1, string_container_2],
+                            [string_container_3, string_container_4]]
+
+        clusterer = Clusterer(self.CLUSTER_THRESHOLD)
+
+        clusterer.add_clusters(existing_cluster, ['str_1', 'str_2'])
+        clusterer.add_objects(string_containers, ['str_1', 'str_2'])
+
+        print(clusterer.get_clusters())
+
 
 if __name__ == '__main__':
     unittest.main()
