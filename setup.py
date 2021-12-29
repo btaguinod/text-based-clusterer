@@ -1,10 +1,21 @@
-import setuptools
+from setuptools import setup, find_packages
+# from setuptools.command.install import install as _install
+#
+#
+# class Install(_install):
+#     def run(self):
+#         _install.do_egg_install(self)
+#         import nltk
+#         nltk.download('stopwords')
+#         nltk.download('punkt')
+
 
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
-setuptools.setup(
+setup(
+    # cmdclass={'install': Install},
     name="text-based-clusterer",
-    version="0.0.4",
+    version="0.0.8",
     author="Benedict Taguinod",
     author_email="benedict.a.taguinod@gmail.com",
     description="A package that clusters python objects based on a chosen string attribute",
@@ -20,7 +31,7 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     package_dir={"": "src"},
-    packages=setuptools.find_packages(where="src"),
+    packages=find_packages(where="src"),
     python_requires=">=3.6",
     install_requires=['numpy', 'nltk'],
 )
